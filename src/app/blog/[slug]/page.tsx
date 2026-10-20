@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CtaSection } from "@/components/sections/cta-section";
 import { ArticleCard } from "@/components/sections/article-card";
+import { BlogCover } from "@/components/art/blog-cover";
 import {
   getArticle,
   getPublishedArticles,
@@ -96,6 +97,12 @@ export default async function ArticlePage({ params }: PageProps) {
               ) : null}
               {article.tags.length > 0 ? <span aria-hidden="true">&middot;</span> : null}
               <span>{article.tags.join(", ")}</span>
+            </div>
+
+            <div className="mt-8 overflow-hidden rounded-xl border border-slate-border">
+              <div className="aspect-[2/1]">
+                <BlogCover slug={article.slug} />
+              </div>
             </div>
 
             <div className="mt-10">

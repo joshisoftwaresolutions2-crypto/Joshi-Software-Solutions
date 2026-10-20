@@ -1,10 +1,21 @@
 import Link from "next/link";
 import type { Article } from "@/content/blog";
 import { formatArticleDate } from "@/content/blog";
+import { BlogCover } from "@/components/art/blog-cover";
 
 export function ArticleCard({ article }: { article: Article }) {
   return (
-    <article className="flex h-full flex-col border-t border-slate-border pt-6">
+    <article className="flex h-full flex-col">
+      <Link
+        href={`/blog/${article.slug}`}
+        className="mb-6 block overflow-hidden rounded-lg border border-slate-border"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        <div className="aspect-[2/1]">
+          <BlogCover slug={article.slug} />
+        </div>
+      </Link>
       {article.publishedAt ? (
         <time
           dateTime={article.publishedAt}

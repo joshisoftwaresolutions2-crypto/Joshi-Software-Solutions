@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { CtaSection } from "@/components/sections/cta-section";
+import { AboutArt } from "@/components/art/about-art";
 import { benefits, processSteps } from "@/content/process";
 import { business } from "@/config/site";
 import { routes } from "@/config/site";
@@ -26,7 +27,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="border-b border-slate-border bg-white">
-        <div className="container-content py-16 sm:py-20">
+        <div className="container-content grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue">
               About
@@ -41,6 +42,7 @@ export default function AboutPage() {
               international clients who need dependable digital work.
             </p>
           </div>
+          <AboutArt />
         </div>
       </section>
 
