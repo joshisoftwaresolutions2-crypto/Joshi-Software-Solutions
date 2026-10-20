@@ -67,6 +67,7 @@ export const whatsapp = {
 export const routes = {
   home: "/",
   services: "/services",
+  pricing: "/pricing",
   portfolio: "/portfolio",
   about: "/about",
   blog: "/blog",

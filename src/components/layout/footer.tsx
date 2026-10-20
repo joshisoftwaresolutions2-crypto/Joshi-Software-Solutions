@@ -6,6 +6,7 @@ import { serviceLinks } from "@/content/services";
 const navLinks = [
   { label: "Home", href: routes.home },
   { label: "Services", href: routes.services },
+  { label: "Pricing", href: routes.pricing },
   { label: "Portfolio", href: routes.portfolio },
   { label: "About", href: routes.about },
   { label: "Blog", href: routes.blog },

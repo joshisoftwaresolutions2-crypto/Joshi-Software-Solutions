@@ -2,6 +2,7 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { ButtonLink } from "@/components/ui/button";
 import { Hero } from "@/components/sections/hero";
 import { ServiceCard } from "@/components/sections/service-card";
+import { PackageCard } from "@/components/sections/package-card";
 import { ProjectCard } from "@/components/sections/project-card";
 import { ArticleCard } from "@/components/sections/article-card";
 import { CtaSection } from "@/components/sections/cta-section";
@@ -10,12 +11,19 @@ import { services } from "@/content/services";
 import { getPublishedProjects } from "@/content/projects";
 import { getPublishedArticles } from "@/content/blog";
 import { benefits, processSteps } from "@/content/process";
-import { prices, customSoftwarePricing, formatInr } from "@/content/pricing";
+import {
+  websitePackages,
+  maintenancePlans,
+  formatInr,
+  pricingNote,
+} from "@/content/pricing";
 import { routes } from "@/config/site";
 
 export default function HomePage() {
   const projects = getPublishedProjects();
   const articles = getPublishedArticles();
+  const packages = websitePackages.filter((pkg) => pkg.published);
+  const plans = maintenancePlans.filter((plan) => plan.published);
 
   return (
     <>
@@ -117,53 +125,54 @@ export default function HomePage() {
         </ol>
       </Section>
 
-      {/* Starting prices */}
-      <Section tone="white">
-        <SectionHeading
-          eyebrow="Pricing"
-          title="Starting prices"
-          intro="Indicative starting points for common projects. Every quote is confirmed after a short conversation about scope."
-        />
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {prices.map((price) => (
-            <div
-              key={price.id}
-              className="flex flex-col rounded-lg border border-slate-border p-6"
-            >
-              <h3 className="text-base font-semibold text-navy">{price.service}</h3>
-              <p className="mt-3 text-2xl font-semibold text-navy">
-                {price.published && price.amount !== null
-                  ? formatInr(price.amount)
-                  : "On request"}
-              </p>
-              <p className="mt-1 text-xs uppercase tracking-[0.1em] text-slate-muted">
-                {price.unit}
-              </p>
-              <ul className="mt-5 space-y-2 text-sm text-slate-muted">
-                {price.includes.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span aria-hidden="true" className="text-blue">
-                      &middot;
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+      {/* Website packages */}
+      <Section tone="white" id="pricing">
+        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+          <SectionHeading
+            eyebrow="Pricing"
+            title="Website packages"
+            intro="Three clear starting points. The final price is confirmed once the scope is agreed."
+          />
+          <ButtonLink href={routes.pricing} variant="secondary">
+            See full pricing
+          </ButtonLink>
+        </div>
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          {packages.map((pkg) => (
+            <PackageCard key={pkg.id} pkg={pkg} />
           ))}
         </div>
+        <p className="mt-8 max-w-3xl rounded-md border border-slate-border bg-slate-light px-5 py-4 text-sm leading-relaxed text-slate-muted">
+          {pricingNote}
+        </p>
+      </Section>
 
-        <div className="mt-8 rounded-lg border border-slate-border bg-slate-light px-6 py-5">
-          <p className="text-sm leading-relaxed text-slate-muted">
-            <span className="font-medium text-navy">
-              {customSoftwarePricing.service}:
-            </span>{" "}
-            {customSoftwarePricing.note}
-          </p>
-          <p className="mt-2 text-xs leading-relaxed text-slate-muted">
-            Project fees are separate from external costs such as domain
-            registration, hosting, and paid third-party integrations.
-          </p>
+      {/* Monthly maintenance teaser */}
+      <Section tone="slate">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Maintenance"
+            title="Keep your site looked after"
+            intro="Optional monthly plans that cover updates, checks, and small changes after launch."
+          />
+          <ul className="divide-y divide-slate-border border-t border-slate-border">
+            {plans.map((plan) => (
+              <li
+                key={plan.id}
+                className="flex items-center justify-between gap-6 py-5"
+              >
+                <div>
+                  <h3 className="text-base font-semibold text-navy">{plan.name}</h3>
+                  <p className="mt-1 text-sm text-slate-muted">{plan.idealFor}</p>
+                </div>
+                <p className="whitespace-nowrap text-lg font-semibold text-navy">
+                  {plan.published && plan.amount !== null
+                    ? `${formatInr(plan.amount)}/mo`
+                    : "On request"}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       </Section>
 
