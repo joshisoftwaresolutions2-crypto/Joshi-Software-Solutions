@@ -21,7 +21,9 @@ export function Footer() {
       <div className="container-content py-14">
         <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <Logo tone="dark" />
+            <div className="inline-flex rounded-lg bg-white p-3">
+              <Logo variant="full" />
+            </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/70">
               {business.tagline}
             </p>

@@ -139,10 +139,18 @@ services page sidebar.
 
 ## 8. Logo and brand assets
 
-The logo is a replaceable placeholder in `src/components/ui/logo.tsx` (the "JS"
-monogram). Swap the inner mark and wordmark for the official logo when supplied.
-Replace `src/app/icon.svg` with the real favicon. Do not modify supplied assets
-without permission.
+Official brand assets live in `public/logos/`:
+
+- `joshi-software-solutions-logo.png` — the full supplied lockup, used in the
+  footer (`Logo variant="full"`).
+- `joshi-symbol.png` — the mark cropped from the supplied lockup, used in the
+  header beside the wordmark.
+- `favicon.png` — the supplied favicon, copied to `src/app/icon.png` so Next.js
+  serves it as the site icon.
+
+`src/components/ui/logo.tsx` renders `variant="mark"` (header) or `variant="full"`
+(footer). Do not modify the supplied source assets; the symbol is a display-time
+crop derived from the supplied logo.
 
 ## 9. Visual assets (illustrations)
 
