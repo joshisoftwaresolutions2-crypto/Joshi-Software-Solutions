@@ -3,6 +3,7 @@ import { Section, SectionHeading } from "@/components/ui/section";
 import { ButtonLink } from "@/components/ui/button";
 import { CtaSection } from "@/components/sections/cta-section";
 import { services } from "@/content/services";
+import { ServiceGlyph } from "@/components/art/service-glyph";
 import { prices, customSoftwarePricing, formatInr } from "@/content/pricing";
 import { routes } from "@/config/site";
 import { buildMetadata } from "@/lib/metadata";
@@ -51,9 +52,14 @@ export default function ServicesPage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue">
                   Service {String(index + 1).padStart(2, "0")}
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold text-navy sm:text-4xl">
-                  {service.name}
-                </h2>
+                <div className="mt-3 flex items-center gap-4">
+                  <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-light text-blue">
+                    <ServiceGlyph id={service.id} className="h-7 w-7" />
+                  </span>
+                  <h2 className="text-3xl font-semibold text-navy sm:text-4xl">
+                    {service.name}
+                  </h2>
+                </div>
                 <p className="mt-5 text-lg leading-relaxed text-slate-muted">
                   {service.detail}
                 </p>

@@ -144,7 +144,31 @@ monogram). Swap the inner mark and wordmark for the official logo when supplied.
 Replace `src/app/icon.svg` with the real favicon. Do not modify supplied assets
 without permission.
 
-## 9. SEO
+## 9. Visual assets (illustrations)
+
+All decorative imagery is original, hand-built **inline SVG / CSS** under
+`src/components/art/` — there is no runtime image-generation service and no
+binary raster assets to manage:
+
+- `hero-art.tsx` — homepage hero composition (abstracted layout, never a fake
+  project screenshot).
+- `about-art.tsx` — About page illustration.
+- `service-glyph.tsx` — one line-art glyph per service, keyed by service `id`.
+- `blog-cover.tsx` — deterministic abstract cover chosen from an article slug.
+- `patterns.tsx` — subtle grid / dot section backgrounds.
+
+Guidelines when extending these:
+
+- Decorative art is `aria-hidden` (no alt needed); informative images need
+  descriptive `alt` text.
+- Do **not** generate a fake logo, portfolio screenshot, client site,
+  testimonial, team photo, or business credential.
+- Keep generated art free of embedded text, logos, and UI text — build all real
+  text in HTML/CSS.
+- Prefer SVG/CSS over raster; keep it sparse and in the navy/white/slate palette
+  with restrained cobalt accents.
+
+## 10. SEO
 
 - Per-route metadata and canonical URLs via `src/lib/metadata.ts`.
 - `src/app/sitemap.ts` generates `/sitemap.xml`.
@@ -154,7 +178,7 @@ without permission.
 Set `NEXT_PUBLIC_SITE_URL` to the real deployed URL before launch so canonical
 URLs, Open Graph tags, and the sitemap are correct.
 
-## 10. Analytics
+## 11. Analytics
 
 Analytics is intentionally **not** enabled. When you add a provider:
 
@@ -162,7 +186,7 @@ Analytics is intentionally **not** enabled. When you add a provider:
 2. Update `/privacy` (`src/app/privacy/page.tsx`) to describe the provider and,
    where required, add a consent mechanism **before** enabling tracking.
 
-## 11. Accessibility, performance, motion
+## 12. Accessibility, performance, motion
 
 - Semantic HTML, skip link, visible focus states, keyboard-operable navigation.
 - `prefers-reduced-motion` is respected globally in `src/app/globals.css`.
@@ -170,7 +194,7 @@ Analytics is intentionally **not** enabled. When you add a provider:
 - Pages default to Server Components; only the header and contact form are
   client components.
 
-## 12. Deployment
+## 13. Deployment
 
 The contact form submits from the browser, so the site no longer requires a Node
 server for the form to work, and it can be hosted on either a Node-based or a
@@ -219,12 +243,13 @@ Alternatively, in the Netlify UI, scope the variable so it is not treated as a
 secret. Either way, protect the key with a Web3Forms **Allowed Domains**
 restriction rather than treating it as private.
 
-## 13. Project structure
+## 14. Project structure
 
 ```
 src/
   app/            Routes (App Router), sitemap, robots, icon
   components/
+    art/          Original inline SVG illustrations and patterns
     layout/       Header, Footer
     sections/     Hero, cards, CTA, homepage sections
     ui/           Button, Section, Logo, EmptyState
@@ -232,10 +257,10 @@ src/
   config/         site.ts (public config incl. public Web3Forms key)
   content/        services, projects, pricing, process, blog data
   lib/            metadata helper
-netlify.toml       Netlify build config and secrets-scan exclusion
+netlify.toml      Netlify build config and secrets-scan exclusion
 ```
 
-## 14. Business assets / details still needed
+## 15. Business assets / details still needed
 
 - Official logo or JS monogram (and favicon).
 - Portfolio screenshots, project names, descriptions, technologies, live URLs,

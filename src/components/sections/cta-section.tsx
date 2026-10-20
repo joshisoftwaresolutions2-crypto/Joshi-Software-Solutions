@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/ui/button";
+import { GridPattern } from "@/components/art/patterns";
 import { routes, contact } from "@/config/site";
 
 type CtaSectionProps = {
@@ -13,8 +14,13 @@ export function CtaSection({
   className,
 }: CtaSectionProps) {
   return (
-    <section className={["bg-navy text-white", className].filter(Boolean).join(" ")}>
-      <div className="container-content py-16 sm:py-20">
+    <section
+      className={["relative overflow-hidden bg-navy text-white", className]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <GridPattern tone="dark" size={40} />
+      <div className="container-content relative py-16 sm:py-20">
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
           <div className="max-w-xl">
             <h2 className="text-3xl font-semibold sm:text-4xl">{heading}</h2>
