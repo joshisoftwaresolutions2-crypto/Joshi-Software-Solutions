@@ -1,0 +1,15 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY is a PUBLIC value by design. It is a Web3Forms
+# form identifier, not a secret, and is intentionally inlined into the browser
+# bundle (Web3Forms' free plan submits from the client). Netlify's secrets scanner
+# flags any env var it has stored as "secret" when that value appears in build
+# output, so we exclude this key from scanning. Protect it with a Web3Forms
+# "Allowed Domains" restriction instead of treating it as a secret.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
