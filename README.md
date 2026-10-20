@@ -106,9 +106,25 @@ and posts without a real date are never shown. Slugs become `/blog/<slug>`.
 
 ## 7. Updating prices
 
-Prices live in `src/content/pricing.ts`. A rate is only shown as a real number
-when both `published: true` and `amount` is a number. Otherwise the site shows
-"On request". Do not guess prices.
+All pricing lives in `src/content/pricing.ts` and is rendered on `/pricing` and,
+for packages, on the homepage. The site is published with approved introductory
+starting prices:
+
+- **Website packages:** Starter ₹4,999, Business ₹9,999 (recommended), Business
+  Plus ₹17,999 — per project.
+- **Individual services:** landing page ₹2,999, business website ₹4,999, UI
+  screen design ₹1,499, small graphic task ₹499, content update ₹499, website
+  maintenance ₹999/month, custom web application ₹15,000+, additional page ₹1,000+.
+- **Maintenance plans:** Basic Care ₹999/mo, Standard Care ₹2,499/mo, Priority
+  Care ₹4,999/mo.
+
+A rate is only shown as a real number when both `published: true` and `amount` is
+a number. Otherwise the site shows "On request". Do not guess prices. These are
+introductory rates and should be revised once actual delivery time is measured.
+
+Data structures: `websitePackages`, `servicePrices`, `maintenancePlans`,
+`maintenanceExclusions`, `pricingNote`, and the legacy `prices` map used by the
+services page sidebar.
 
 ## 8. Logo and brand assets
 
@@ -190,9 +206,10 @@ src/
 - Official logo or JS monogram (and favicon).
 - Portfolio screenshots, project names, descriptions, technologies, live URLs,
   and public repo links (real, approved items only).
-- Approved starting prices for the pricing section.
 - Founder biography, year established, team size, and any qualifications or
   awards you want published (currently kept out of the public site as TODOs in
   `src/app/about/page.tsx`).
 - Final deployed URL for `NEXT_PUBLIC_SITE_URL`.
 - Review of the Privacy Policy draft against final hosting/form/analytics setup.
+- International pricing approach (quote in USD or another agreed currency rather
+  than converting Indian packages mechanically) once a delivery process is set.

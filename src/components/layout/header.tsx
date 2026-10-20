@@ -9,6 +9,7 @@ import { routes } from "@/config/site";
 
 const navLinks = [
   { label: "Services", href: routes.services },
+  { label: "Pricing", href: routes.pricing },
   { label: "Portfolio", href: routes.portfolio },
   { label: "About", href: routes.about },
   { label: "Blog", href: routes.blog },

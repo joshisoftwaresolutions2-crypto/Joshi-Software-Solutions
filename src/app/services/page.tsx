@@ -28,6 +28,11 @@ export default function ServicesPage() {
             title="Services built around real business needs"
             intro="Each engagement is scoped clearly, delivered in stages, and handed over with what you need to keep things running."
           />
+          <div className="mt-8">
+            <ButtonLink href={routes.pricing} variant="secondary">
+              View pricing and packages
+            </ButtonLink>
+          </div>
         </div>
       </section>
 
