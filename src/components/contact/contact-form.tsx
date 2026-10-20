@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { services } from "@/content/services";
+import { business, web3forms } from "@/config/site";
 
 export type ContactFormState = "idle" | "submitting" | "success" | "error";
 
@@ -59,6 +60,15 @@ export function ContactForm() {
     // Prevent duplicate submissions while a request is in flight.
     if (state === "submitting") return;
 
+    // Clear setup message instead of failing silently when the key is missing.
+    if (!web3forms.configured || !web3forms.accessKey) {
+      setState("error");
+      setMessage(
+        `The contact form isn't configured yet. Please email us directly at ${business.email} while this is being set up.`,
+      );
+      return;
+    }
+
     const clientErrors = validate();
     if (Object.keys(clientErrors).length > 0) {
       setErrors(clientErrors);
@@ -72,23 +82,37 @@ export function ContactForm() {
     setMessage("");
 
     try {
-      const response = await fetch("/api/contact", {
+      // Web3Forms' supported free-plan integration submits from the browser.
+      const formData = new FormData();
+      formData.append("access_key", web3forms.accessKey);
+      formData.append("subject", `New enquiry from ${values.name} — ${business.name}`);
+      formData.append("from_name", `${business.name} Website`);
+      // The visitor's email is used as reply-to, never as the sender.
+      formData.append("replyto", values.email);
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("service", values.service);
+      formData.append("description", values.description);
+      formData.append("budget", values.budget || "Not specified");
+      formData.append("timeline", values.timeline || "Not specified");
+      // Web3Forms' own honeypot field: a truthy value marks the submission as spam.
+      formData.append("botcheck", values["company-website"] ? "true" : "");
+
+      const response = await fetch(web3forms.endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        headers: { Accept: "application/json" },
+        body: formData,
       });
 
       const result = (await response.json()) as {
-        ok: boolean;
-        error?: string;
-        errors?: FieldErrors;
+        success?: boolean;
+        message?: string;
       };
 
-      if (!response.ok || !result.ok) {
+      if (!response.ok || !result.success) {
         setState("error");
-        setErrors(result.errors ?? {});
         setMessage(
-          result.error ??
+          result.message ??
             "We couldn't send your message right now. Please try again, or email us directly.",
         );
         return;

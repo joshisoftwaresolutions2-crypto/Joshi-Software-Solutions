@@ -3,7 +3,7 @@
 Production-ready marketing website for **Joshi Software Solutions**.
 
 - **Stack:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4
-- **Contact form:** Web3Forms, submitted via a server-side route handler
+- **Contact form:** Web3Forms, submitted from the browser (free-plan method)
 - **Deployment target:** any host that runs a Node.js Next.js server (see below)
 
 ---
@@ -44,13 +44,12 @@ them in components.
 | `NEXT_PUBLIC_BUSINESS_EMAIL` | Public | Business email shown in footer and contact    |
 | `NEXT_PUBLIC_BUSINESS_PHONE` | Public | Phone / WhatsApp number (international format)|
 | `NEXT_PUBLIC_SITE_URL`       | Public | Canonical site URL, metadata, sitemap         |
-| `WEB3FORMS_ACCESS_KEY`       | Server | Web3Forms key. **Never** prefix with `NEXT_PUBLIC_` |
+| `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` | Public | Web3Forms access key (a public form ID, not a secret) |
 
 - Copy `.env.example` to `.env.local` for local work. `.env.local` is gitignored.
 - The `NEXT_PUBLIC_` prefix makes a value available to the browser — only use it
-  for values that are safe to expose (email, phone, site URL).
-- `WEB3FORMS_ACCESS_KEY` is read only inside the server route handler and is never
-  included in the client bundle.
+  for values that are safe to expose (email, phone, site URL, and the Web3Forms
+  access key, which is a public form identifier by design).
 
 ### Changing email, phone, or site URL
 
@@ -64,24 +63,36 @@ automatically.
    business email address.
 2. Copy the generated **Access Key**.
 3. Add it to `.env.local` (and to your host's environment variables) as
-   `WEB3FORMS_ACCESS_KEY`.
+   `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`.
 4. Restart the dev server.
+5. **Recommended:** in the Web3Forms dashboard, open your form's settings and add
+   your domain(s) under **Allowed Domains**. Because the key is public, this
+   restriction is what stops other sites from sending through your form.
 
-The contact form posts to `/api/contact` (a Next.js route handler). That handler:
+### Why the form submits from the browser
 
-- reads the key on the server and forwards the enquiry to Web3Forms;
-- validates and sanitises input and only accepts the expected fields;
-- sets the visitor's email as **reply-to** (their address is never used as the
-  sender);
-- applies simple per-IP rate limiting and honeypot spam protection;
-- returns a clear setup error (HTTP 503) when the key is missing, instead of
-  failing silently.
+Web3Forms' free plan **rejects server-initiated submissions**. Calling their API
+from a backend returns:
+
+> This method is not allowed. Use our API in client side or contact support with
+> server IP address (Pro plan is required)
+
+So the contact form submits directly from the browser (Web3Forms' supported
+free-plan method). The access key is therefore a public value in the client
+bundle — it is a form identifier, not a secret. Protect it with the domain
+restriction above. (If you upgrade to Web3Forms Pro, you could move submission
+back to a server route handler and keep the key server-only.)
+
+The form still provides: client-side validation, a loading state, duplicate
+submission prevention, clear success and failure messages, preserved input after
+failure, reset only on confirmed success, and a honeypot spam field. When the key
+is missing, the form shows a clear setup message instead of failing silently.
 
 ### Testing the contact form
 
-With `WEB3FORMS_ACCESS_KEY` set, submit the `/contact` form and confirm the
-enquiry arrives at the business inbox. Without the key, the API returns a clear
-"not configured" message — this is expected, not a bug.
+With `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` set, submit the `/contact` form and
+confirm the enquiry arrives at the business inbox. Without the key, the form
+shows a clear "not configured" message — this is expected, not a bug.
 
 ## 5. Adding portfolio projects
 
@@ -161,42 +172,43 @@ Analytics is intentionally **not** enabled. When you add a provider:
 
 ## 12. Deployment
 
-The contact form uses a Next.js **server route handler**, so a purely static host
-(for example, GitHub Pages or a static export) will not run it. Choose a host
-that runs a Node.js Next.js server:
+The contact form submits from the browser, so the site no longer requires a Node
+server for the form to work, and it can be hosted on either a Node-based or a
+static host.
 
-- **Recommended:** [Vercel](https://vercel.com) — free Hobby tier, supports
-  Next.js route handlers; commercial use is permitted on paid tiers (review the
-  current terms for your usage).
-- **Alternatives:** Render, Railway, or Fly.io free/low-cost tiers that run a
-  Node server.
+- **Node-based (recommended for Next.js):** [Vercel](https://vercel.com) free
+  Hobby tier, or Render / Railway / Fly.io free or low-cost tiers.
+- **Static hosts:** Netlify, Cloudflare Pages, or GitHub Pages also work, since
+  there is no server-side form endpoint. Build with `next build` (and
+  `output: "export"` if the host needs static output; note that `output: "export"`
+  disables image optimisation and any future server routes).
 
-If you must deploy statically, the contact form will not function; in that case
-switch the form to a Web3Forms browser integration and accept that the access key
-becomes publicly visible (it is designed for browser use but should be treated as
-public), or add a small serverless function to proxy submissions.
+Whichever host you choose, these environment variables must be present at build
+time (they are inlined into the browser bundle): `NEXT_PUBLIC_BUSINESS_EMAIL`,
+`NEXT_PUBLIC_BUSINESS_PHONE`, `NEXT_PUBLIC_SITE_URL`, and
+`NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`.
 
 ### Steps (Vercel)
 
 1. Push this repository to GitHub.
 2. Import the project in Vercel.
 3. Add the four environment variables (Section 3) in the Vercel project settings.
-4. Deploy. Vercel runs `next build` and hosts the app with route handlers online.
+4. Deploy. Vercel runs `next build` and serves the app.
 
 The initial deployment can use the free `*.vercel.app` subdomain, then set
-`NEXT_PUBLIC_SITE_URL` to that URL.
+`NEXT_PUBLIC_SITE_URL` to that URL and add it as an Allowed Domain in Web3Forms.
 
 ## 13. Project structure
 
 ```
 src/
-  app/            Routes (App Router), API route, sitemap, robots, icon
+  app/            Routes (App Router), sitemap, robots, icon
   components/
     layout/       Header, Footer
     sections/     Hero, cards, CTA, homepage sections
     ui/           Button, Section, Logo, EmptyState
-    contact/      ContactForm (client)
-  config/         site.ts (public config), server.ts (server-only config)
+    contact/      ContactForm (client, posts to Web3Forms)
+  config/         site.ts (public config incl. public Web3Forms key)
   content/        services, projects, pricing, process, blog data
   lib/            metadata helper
 ```

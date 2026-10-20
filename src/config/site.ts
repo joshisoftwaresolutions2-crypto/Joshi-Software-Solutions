@@ -38,6 +38,30 @@ export const siteUrl = read(process.env.NEXT_PUBLIC_SITE_URL, DEFAULTS.siteUrl).
 );
 
 /**
+ * Web3Forms access key.
+ *
+ * IMPORTANT: This is a PUBLIC value by design. Web3Forms' supported free-plan
+ * integration submits directly from the browser, so this key is exposed in the
+ * client bundle. It is a form identifier, not a secret: protect it by setting a
+ * domain restriction in the Web3Forms dashboard (Settings -> Allowed Domains)
+ * so it can only be used from your own domains.
+ *
+ * The server-side submission route was removed because Web3Forms' free plan
+ * rejects server-initiated requests ("This method is not allowed. Use our API in
+ * client side or contact support with server IP address (Pro plan is required)").
+ */
+export const web3formsAccessKey: string | undefined = (() => {
+  const trimmed = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : undefined;
+})();
+
+export const web3forms = {
+  accessKey: web3formsAccessKey,
+  configured: Boolean(web3formsAccessKey),
+  endpoint: "https://api.web3forms.com/submit",
+} as const;
+
+/**
  * Normalise a phone number into WhatsApp's international format: digits only,
  * no leading `+`, no spaces, dashes, or parentheses.
  */
@@ -85,6 +109,11 @@ export function logConfigWarnings(): void {
   }
   if (!process.env.NEXT_PUBLIC_SITE_URL) {
     warnMissing("NEXT_PUBLIC_SITE_URL", DEFAULTS.siteUrl);
+  }
+  if (!process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY) {
+    console.warn(
+      "[config] Missing NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY. The contact form will show a clear setup message instead of sending. Add it to .env.local (development) or your host's environment settings (production).",
+    );
   }
 }
 
