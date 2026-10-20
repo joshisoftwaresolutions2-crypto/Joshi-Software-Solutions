@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { services } from "@/content/services";
 import { business, web3forms } from "@/config/site";
@@ -42,6 +42,14 @@ export function ContactForm() {
 
   const update = (field: keyof typeof values, value: string) =>
     setValues((prev) => ({ ...prev, [field]: value }));
+
+  // Focus first error field when errors appear
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      const firstErrorField = document.getElementById(Object.keys(errors)[0]);
+      firstErrorField?.focus();
+    }
+  }, [errors]);
 
   const validate = (): FieldErrors => {
     const next: FieldErrors = {};
@@ -314,6 +322,17 @@ export function ContactForm() {
           onChange={(event) => update("company-website", event.target.value)}
         />
       </div>
+
+      {Object.keys(errors).length > 0 && (
+        <div role="alert" aria-live="assertive" className="rounded-md bg-red-50 p-4">
+          <p className="text-sm font-medium text-red-800">Please fix the following errors:</p>
+          <ul className="mt-2 list-disc list-inside text-sm text-red-700">
+            {Object.entries(errors).map(([field, error]) => (
+              <li key={field}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-4">
         <Button type="submit" size="lg" disabled={state === "submitting"}>

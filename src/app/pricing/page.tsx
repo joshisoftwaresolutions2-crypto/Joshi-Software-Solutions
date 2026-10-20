@@ -55,7 +55,7 @@ export default function PricingPage() {
           title="Three ways to get started"
           intro="Pick the level that matches your needs today. We'll confirm the final price once the scope is clear."
         />
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
@@ -87,7 +87,7 @@ export default function PricingPage() {
           title="Monthly care plans"
           intro="Keep your site updated and supported after launch, on a clearly defined monthly scope."
         />
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan) => (
             <MaintenanceCard key={plan.id} plan={plan} />
           ))}

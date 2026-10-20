@@ -19,7 +19,7 @@ export function ProjectShot({ project, priority = false }: { project: Project; p
           width={screenshot.width}
           height={screenshot.height}
           priority={priority}
-          sizes="(min-width: 1024px) 50vw, 100vw"
+          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 50vw"
           className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
         />
       </div>
@@ -40,7 +40,7 @@ export function ProjectCard({ project, priority = false }: { project: Project; p
             width={screenshot.width}
             height={screenshot.height}
             priority={priority}
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 50vw"
             className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </div>

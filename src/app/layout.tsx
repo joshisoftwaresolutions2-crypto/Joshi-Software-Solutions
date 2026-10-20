@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { business, siteUrl, logConfigWarnings } from "@/config/site";
+import Script from "next/script";
 
 logConfigWarnings();
 
@@ -11,6 +12,7 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -64,7 +66,24 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="flex min-h-screen flex-col antialiased">
+        <Script
+          id="font-preload"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('fonts' in document) {
+                document.fonts.ready.then(() => {
+                  document.documentElement.classList.add('fonts-loaded');
+                });
+              }
+            `,
+          }}
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-sm focus:text-white"
