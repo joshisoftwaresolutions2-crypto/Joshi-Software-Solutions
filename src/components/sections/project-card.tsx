@@ -1,6 +1,32 @@
 import Image from "next/image";
 import type { Project } from "@/content/projects";
 
+/**
+ * Screenshot-only panel. Used on the portfolio page where the project name,
+ * category, technologies and links are rendered in an adjacent details column,
+ * so repeating them inside the card would duplicate the content.
+ */
+export function ProjectShot({ project, priority = false }: { project: Project; priority?: boolean }) {
+  const screenshot = project.screenshots[0];
+  if (!screenshot) return null;
+
+  return (
+    <div className="group overflow-hidden rounded-lg border border-slate-border bg-slate-light">
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
+          src={screenshot.src}
+          alt={screenshot.alt}
+          width={screenshot.width}
+          height={screenshot.height}
+          priority={priority}
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+        />
+      </div>
+    </div>
+  );
+}
+
 export function ProjectCard({ project, priority = false }: { project: Project; priority?: boolean }) {
   const screenshot = project.screenshots[0];
 

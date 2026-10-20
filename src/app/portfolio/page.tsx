@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getPublishedProjects } from "@/content/projects";
 import { routes } from "@/config/site";
 import { buildMetadata } from "@/lib/metadata";
-import { ProjectCard } from "@/components/sections/project-card";
+import { ProjectShot } from "@/components/sections/project-card";
 
 export const metadata: Metadata = buildMetadata({
   title: "Portfolio",
@@ -41,7 +41,7 @@ export default function PortfolioPage() {
               >
                 <div>
                   {project.screenshots.length > 0 ? (
-                    <ProjectCard project={project} priority={index === 0} />
+                    <ProjectShot project={project} priority={index === 0} />
                   ) : null}
                 </div>
                 <div className="max-w-xl">
