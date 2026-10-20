@@ -25,7 +25,7 @@ export default function PortfolioPage() {
           <SectionHeading
             eyebrow="Portfolio"
             title="Selected work"
-            intro="Real projects, described honestly. Each entry explains the objective, our contribution, and the technologies used."
+            intro="Projects I've designed and built to demonstrate how I approach design, functionality, and problem-solving. Each entry explains the objective, the approach, and the technologies used."
           />
         </div>
       </section>
@@ -60,7 +60,7 @@ export default function PortfolioPage() {
                   </p>
 
                   <h3 className="mt-6 text-sm font-semibold uppercase tracking-[0.1em] text-navy">
-                    Our contribution
+                    Approach
                   </h3>
                   <p className="mt-2 text-base leading-relaxed text-slate-muted">
                     {project.contribution}

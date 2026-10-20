@@ -38,6 +38,12 @@ export function CtaSection({
             >
               Message on WhatsApp
             </a>
+            <a
+              href={contact.emailHref}
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-white/25 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Email us
+            </a>
           </div>
         </div>
       </div>

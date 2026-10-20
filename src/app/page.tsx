@@ -4,14 +4,12 @@ import { Hero } from "@/components/sections/hero";
 import { ServiceCard } from "@/components/sections/service-card";
 import { PackageCard } from "@/components/sections/package-card";
 import { ProjectCard } from "@/components/sections/project-card";
-import { ArticleCard } from "@/components/sections/article-card";
 import { CtaSection } from "@/components/sections/cta-section";
 import { FounderIntro } from "@/components/sections/founder-section";
 import { EmptyState } from "@/components/ui/empty-state";
 import { services } from "@/content/services";
 import { getPublishedProjects } from "@/content/projects";
-import { getPublishedArticles } from "@/content/blog";
-import { benefits, processSteps } from "@/content/process";
+import { benefits } from "@/content/process";
 import {
   websitePackages,
   maintenancePlans,
@@ -22,7 +20,6 @@ import { routes } from "@/config/site";
 
 export default function HomePage() {
   const projects = getPublishedProjects();
-  const articles = getPublishedArticles();
   const packages = websitePackages.filter((pkg) => pkg.published);
   const plans = maintenancePlans.filter((plan) => plan.published);
 
@@ -30,7 +27,7 @@ export default function HomePage() {
     <>
       <Hero />
 
-      {/* Services overview — editorial two-column intro beside a stacked list */}
+      {/* 1. Services overview */}
       <Section id="services" tone="white">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <SectionHeading
@@ -51,13 +48,13 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Selected work */}
+      {/* 2. Selected projects */}
       <Section tone="slate">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
             eyebrow="Selected work"
-            title="Projects we've built"
-            intro="A sample of recent work. Each project below was delivered for a real client."
+            title="Projects"
+            intro="A selection of websites and web applications that show how we approach design, functionality, and problem-solving."
           />
           {projects.length > 0 ? (
             <ButtonLink href={routes.portfolio} variant="secondary">
@@ -84,7 +81,7 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Why work with us — numbered list against intro */}
+      {/* 3. Why work with us */}
       <Section tone="white">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <SectionHeading
@@ -105,57 +102,40 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Process — dark band with four steps */}
-      <Section tone="dark">
-        <SectionHeading
-          eyebrow="Process"
-          title="How a project runs"
-          intro="Four clear stages, so you always know what is happening and what comes next."
-          tone="dark"
-        />
-        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {processSteps.map((step) => (
-            <li key={step.number} className="border-t border-white/15 pt-6">
-              <span className="text-sm font-semibold text-blue-300">{step.number}</span>
-              <h3 className="mt-3 text-lg font-semibold text-white">{step.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">
-                {step.description}
-              </p>
-            </li>
-          ))}
-        </ol>
+      {/* 4. Founder introduction */}
+      <Section tone="slate">
+        <FounderIntro />
       </Section>
 
-      {/* Website packages */}
+      {/* 5. Starting prices — packages and optional maintenance */}
       <Section tone="white" id="pricing">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
             eyebrow="Pricing"
-            title="Website packages"
-            intro="Three clear starting points. The final price is confirmed once the scope is agreed."
+            title="Starting prices"
+            intro="Clear starting points for the most common projects. The final price is confirmed once the scope is agreed."
           />
           <ButtonLink href={routes.pricing} variant="secondary">
             See full pricing
           </ButtonLink>
         </div>
+
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {packages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
         </div>
-        <p className="mt-8 max-w-3xl rounded-md border border-slate-border bg-slate-light px-5 py-4 text-sm leading-relaxed text-slate-muted">
-          {pricingNote}
-        </p>
-      </Section>
 
-      {/* Monthly maintenance teaser */}
-      <Section tone="slate">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Maintenance"
-            title="Keep your site looked after"
-            intro="Optional monthly plans that cover updates, checks, and small changes after launch."
-          />
+        <div className="mt-14 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div className="max-w-md">
+            <h3 className="text-lg font-semibold text-navy">
+              Optional monthly maintenance
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-muted">
+              Keep your site looked after after launch, with updates, checks, and
+              small changes.
+            </p>
+          </div>
           <ul className="divide-y divide-slate-border border-t border-slate-border">
             {plans.map((plan) => (
               <li
@@ -175,43 +155,13 @@ export default function HomePage() {
             ))}
           </ul>
         </div>
+
+        <p className="mt-8 max-w-3xl rounded-md border border-slate-border bg-slate-light px-5 py-4 text-sm leading-relaxed text-slate-muted">
+          {pricingNote}
+        </p>
       </Section>
 
-      {/* Founder introduction */}
-      <Section tone="white">
-        <FounderIntro />
-      </Section>
-
-      {/* Blog preview */}
-      <Section tone="slate">
-        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-          <SectionHeading
-            eyebrow="Journal"
-            title="Notes and guides"
-            intro="Occasional writing on websites, software planning, and design for small businesses."
-          />
-          {articles.length > 0 ? (
-            <ButtonLink href={routes.blog} variant="secondary">
-              Read the blog
-            </ButtonLink>
-          ) : null}
-        </div>
-        <div className="mt-10">
-          {articles.length > 0 ? (
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {articles.slice(0, 3).map((article) => (
-                <ArticleCard key={article.slug} article={article} />
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              title="No articles published yet"
-              description="We're preparing a few pieces on small-business websites, landing pages, and custom software planning. New writing will appear here."
-            />
-          )}
-        </div>
-      </Section>
-
+      {/* 6. Contact call to action */}
       <CtaSection />
     </>
   );
