@@ -58,7 +58,7 @@ export default function PrivacyPage() {
               How submissions are delivered
             </h2>
             <p className="mt-3">
-              Contact form submissions are processed by{" "}
+              Contact form submissions are sent directly from your browser to{" "}
               <a
                 href="https://web3forms.com"
                 target="_blank"
