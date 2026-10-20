@@ -198,6 +198,27 @@ time (they are inlined into the browser bundle): `NEXT_PUBLIC_BUSINESS_EMAIL`,
 The initial deployment can use the free `*.vercel.app` subdomain, then set
 `NEXT_PUBLIC_SITE_URL` to that URL and add it as an Allowed Domain in Web3Forms.
 
+### Steps (Netlify)
+
+1. Push this repository to GitHub and import it in Netlify.
+2. Add the four environment variables (Section 3) in Netlify.
+3. Deploy. `netlify.toml` already configures the build command and the Next.js
+   plugin, so no manual build settings are required.
+
+**Important — Netlify secrets scanning.** If you store
+`NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` as a **secret** env var in Netlify, the
+post-build secrets scanner will fail the build because that value is (by design)
+inlined into the browser bundle. `netlify.toml` already excludes this key via:
+
+```toml
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY"
+```
+
+Alternatively, in the Netlify UI, scope the variable so it is not treated as a
+secret. Either way, protect the key with a Web3Forms **Allowed Domains**
+restriction rather than treating it as private.
+
 ## 13. Project structure
 
 ```
@@ -211,6 +232,7 @@ src/
   config/         site.ts (public config incl. public Web3Forms key)
   content/        services, projects, pricing, process, blog data
   lib/            metadata helper
+netlify.toml       Netlify build config and secrets-scan exclusion
 ```
 
 ## 14. Business assets / details still needed
