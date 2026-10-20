@@ -66,8 +66,8 @@ export default function HomePage() {
         <div className="mt-10">
           {projects.length > 0 ? (
             <div className="grid gap-6 lg:grid-cols-2">
-              {projects.slice(0, 4).map((project, index) => (
-                <ProjectCard key={project.slug} project={project} priority={index === 0} />
+              {projects.slice(0, 4).map((project) => (
+                <ProjectCard key={project.slug} project={project} />
               ))}
             </div>
           ) : (
@@ -120,13 +120,13 @@ export default function HomePage() {
           </ButtonLink>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
         </div>
 
-        <div className="mt-14 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <div className="max-w-md">
             <h3 className="text-lg font-semibold text-navy">
               Optional monthly maintenance

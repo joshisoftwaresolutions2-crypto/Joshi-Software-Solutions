@@ -19,7 +19,7 @@ export function Footer() {
   return (
     <footer className="bg-navy text-white">
       <div className="container-content py-14">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
             <div className="inline-flex rounded-lg bg-white p-3">
               <Logo variant="full" />

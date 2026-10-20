@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/logo";
@@ -19,9 +19,72 @@ const navLinks = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const menuRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   const isActive = (href: string) =>
     href === routes.home ? pathname === href : pathname.startsWith(href);
+
+  // Focus trap and escape key handling
+  useEffect(() => {
+    if (!open) return;
+
+    const nav = menuRef.current;
+    const trigger = triggerRef.current;
+    if (!nav) return;
+
+    // Store the element that had focus before opening
+    lastFocusedRef.current = document.activeElement as HTMLElement;
+
+    // Focus the first focusable element in the menu
+    const focusableElements = nav.querySelectorAll<HTMLElement>(
+      'a[href], button, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusableElements.length > 0) {
+      focusableElements[0].focus();
+    }
+
+    // Handle escape key
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    // Focus trap
+    const handleFocus = (event: KeyboardEvent) => {
+      const focusableElements = Array.from(
+        nav.querySelectorAll<HTMLElement>(
+          'a[href], button, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    nav.addEventListener("keydown", handleFocus);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      nav.removeEventListener("keydown", handleFocus);
+      // Restore focus to trigger button when closing
+      if (trigger) {
+        trigger.focus();
+      }
+    };
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-border bg-white/95 backdrop-blur">
@@ -55,6 +118,7 @@ export function Header() {
         </div>
 
         <button
+          ref={triggerRef}
           type="button"
           className="inline-flex items-center justify-center rounded-md p-2 text-navy md:hidden"
           aria-expanded={open}
@@ -87,6 +151,7 @@ export function Header() {
 
       {open ? (
         <nav
+          ref={menuRef}
           id="mobile-nav"
           aria-label="Mobile"
           className="border-t border-slate-border bg-white md:hidden"
