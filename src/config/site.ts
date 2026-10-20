@@ -32,6 +32,20 @@ export const business = {
   phone: read(process.env.NEXT_PUBLIC_BUSINESS_PHONE, DEFAULTS.phone),
 } as const;
 
+/**
+ * Founder details.
+ *
+ * Joshi Software Solutions is a solo business. Presenting the founder honestly
+ * as the person who personally handles projects is more trustworthy for a new
+ * studio than implying a large agency. Keep claims factual.
+ */
+export const founder = {
+  name: "Lucky Joshi",
+  role: "Founder & Developer",
+  photo: "/founder/lucky-joshi.webp",
+  photoAlt: "Portrait of Lucky Joshi, Founder and Developer at Joshi Software Solutions",
+} as const;
+
 export const siteUrl = read(process.env.NEXT_PUBLIC_SITE_URL, DEFAULTS.siteUrl).replace(
   /\/+$/,
   "",

@@ -6,6 +6,7 @@ import { PackageCard } from "@/components/sections/package-card";
 import { ProjectCard } from "@/components/sections/project-card";
 import { ArticleCard } from "@/components/sections/article-card";
 import { CtaSection } from "@/components/sections/cta-section";
+import { FounderIntro } from "@/components/sections/founder-section";
 import { EmptyState } from "@/components/ui/empty-state";
 import { services } from "@/content/services";
 import { getPublishedProjects } from "@/content/projects";
@@ -174,6 +175,11 @@ export default function HomePage() {
             ))}
           </ul>
         </div>
+      </Section>
+
+      {/* Founder introduction */}
+      <Section tone="white">
+        <FounderIntro />
       </Section>
 
       {/* Blog preview */}

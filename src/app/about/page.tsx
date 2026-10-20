@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { CtaSection } from "@/components/sections/cta-section";
 import { AboutArt } from "@/components/art/about-art";
+import { FounderSection } from "@/components/sections/founder-section";
 import { benefits, processSteps } from "@/content/process";
 import { business } from "@/config/site";
 import { routes } from "@/config/site";
@@ -13,15 +14,6 @@ export const metadata: Metadata = buildMetadata({
     "How Joshi Software Solutions works, what we focus on, and the kind of problems we help businesses solve.",
   path: routes.about,
 });
-
-/**
- * TODO(content): Add approved business details before launch:
- * - Founder name and short biography
- * - Year established
- * - Team size, if relevant
- * - Any qualifications, certifications, or awards you want published
- * Do not render these as public content until confirmed.
- */
 
 export default function AboutPage() {
   return (
@@ -47,6 +39,10 @@ export default function AboutPage() {
       </section>
 
       <Section tone="white">
+        <FounderSection />
+      </Section>
+
+      <Section tone="slate">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <SectionHeading eyebrow="Approach" title="How we think about the work" />
           <div className="max-w-2xl space-y-5 text-base leading-relaxed text-slate-muted">
@@ -69,7 +65,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section tone="slate">
+      <Section tone="white">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <SectionHeading
             eyebrow="Problems we help with"
@@ -94,7 +90,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section tone="white">
+      <Section tone="slate">
         <SectionHeading
           eyebrow="Principles"
           title="What you can expect from us"
