@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
-import { routes, siteUrl } from "@/config/site";
+import { routes, siteUrl, isSanityConfigured } from "@/config/site";
 import { getPublishedArticles } from "@/content/blog";
+import { getArticleSlugs } from "@/lib/sanity/articles";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -16,12 +17,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}${routes.privacy}`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const articleRoutes: MetadataRoute.Sitemap = getPublishedArticles().map((article) => ({
-    url: `${siteUrl}/blog/${article.slug}`,
-    lastModified: article.publishedAt ? new Date(article.publishedAt) : now,
-    changeFrequency: "monthly",
-    priority: 0.5,
-  }));
+  let articleRoutes: MetadataRoute.Sitemap = [];
+
+  if (isSanityConfigured()) {
+    const slugs = await getArticleSlugs();
+    articleRoutes = slugs.map((slug) => ({
+      url: `${siteUrl}/blog/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    }));
+  } else {
+    articleRoutes = getPublishedArticles().map((article) => ({
+      url: `${siteUrl}/blog/${article.slug}`,
+      lastModified: article.publishedAt ? new Date(article.publishedAt) : now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    }));
+  }
 
   return [...staticRoutes, ...articleRoutes];
 }

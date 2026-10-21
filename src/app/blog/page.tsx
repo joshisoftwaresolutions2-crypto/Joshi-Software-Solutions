@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { Section, SectionHeading } from "@/components/ui/section";
-import { ButtonLink } from "@/components/ui/button";
-import { CtaSection } from "@/components/sections/cta-section";
-import { ArticleCard } from "@/components/sections/article-card";
-import { EmptyState } from "@/components/ui/empty-state";
-import { getPublishedArticles } from "@/content/blog";
-import { routes } from "@/config/site";
 import { buildMetadata } from "@/lib/metadata";
+import { isSanityConfigured, routes } from "@/config/site";
+import { getArticles, getCategories, getFeaturedArticle } from "@/lib/sanity/articles";
+import { BlogPageClient } from "./BlogPageClient";
 
 export const metadata: Metadata = buildMetadata({
   title: "Blog",
@@ -15,41 +11,36 @@ export const metadata: Metadata = buildMetadata({
   path: routes.blog,
 });
 
-export default function BlogPage() {
-  const articles = getPublishedArticles();
+type BlogPageProps = {
+  searchParams: Promise<{ category?: string }>;
+};
+
+async function getBlogData() {
+  if (!isSanityConfigured()) {
+    return { featured: null, articles: [], categories: [] };
+  }
+
+  const [featured, articles, categories] = await Promise.all([
+    getFeaturedArticle(),
+    getArticles(),
+    getCategories(),
+  ]);
+
+  return { featured, articles, categories };
+}
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const [{ featured, articles, categories }, query] = await Promise.all([
+    getBlogData(),
+    searchParams,
+  ]);
 
   return (
-    <>
-      <section className="border-b border-slate-border bg-white">
-        <div className="container-content py-16 sm:py-20">
-          <SectionHeading
-            eyebrow="Journal"
-            title="Notes and guides"
-            intro="Occasional writing on websites, software planning, maintenance, and design for small businesses."
-          />
-        </div>
-      </section>
-
-      <Section tone="white">
-        {articles.length > 0 ? (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-            {articles.map((article) => (
-              <ArticleCard key={article.slug} article={article} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title="No articles published yet"
-            description="We're preparing a few pieces on small-business websites, landing pages, custom software planning, and design. New writing will appear here as it's finished."
-          >
-            <ButtonLink href={routes.contact} variant="secondary">
-              Get in touch instead
-            </ButtonLink>
-          </EmptyState>
-        )}
-      </Section>
-
-      <CtaSection />
-    </>
+    <BlogPageClient
+      initialFeatured={featured}
+      initialArticles={articles}
+      initialCategories={categories}
+      initialCategory={query.category}
+    />
   );
 }
