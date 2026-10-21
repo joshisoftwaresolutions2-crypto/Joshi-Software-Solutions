@@ -16,11 +16,15 @@ Production-ready marketing website for **Joshi Software Solutions**.
 ## 2. Local setup
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 cp .env.example .env.local   # Windows: copy .env.example .env.local
 # edit .env.local and fill in real values
 npm run dev
 ```
+
+`--legacy-peer-deps` is required because the Sanity packages and the current
+ESLint major version declare different peer ranges. The install succeeds that
+way; `npm run lint`, `npm run typecheck`, and `npm run build` all pass.
 
 The site runs at http://localhost:3000.
 
@@ -33,6 +37,7 @@ The site runs at http://localhost:3000.
 | `npm run start`     | Run the production build locally         |
 | `npm run lint`      | ESLint                                   |
 | `npm run typecheck` | TypeScript type checking (`tsc --noEmit`)|
+| `npm run seed:articles` | Import the five starting blog drafts into Sanity (needs `SANITY_API_TOKEN`) |
 
 ## 3. Environment variables
 
@@ -45,6 +50,11 @@ them in components.
 | `NEXT_PUBLIC_BUSINESS_PHONE` | Public | Phone / WhatsApp number (international format)|
 | `NEXT_PUBLIC_SITE_URL`       | Public | Canonical site URL, metadata, sitemap         |
 | `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` | Public | Web3Forms access key (a public form ID, not a secret) |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Public | Sanity project ID used to read published blog content |
+| `NEXT_PUBLIC_SANITY_DATASET` | Public | Sanity dataset name (usually `production`)    |
+| `SANITY_STUDIO_PROJECT_ID`   | Private | Project ID used by Studio and seeding scripts |
+| `SANITY_STUDIO_DATASET`      | Private | Dataset used by Studio and seeding scripts    |
+| `SANITY_API_TOKEN`           | Private | Write token for seeding drafts. Never expose to the browser |
 
 - Copy `.env.example` to `.env.local` for local work. `.env.local` is gitignored.
 - The `NEXT_PUBLIC_` prefix makes a value available to the browser — only use it
@@ -108,12 +118,115 @@ Do **not** invent projects. To publish real work:
 Fields: `slug`, `name`, `category`, `summary`, `objective`, `contribution`,
 `technologies`, `screenshots` (with real `alt` text), `liveUrl`, `repoUrl`.
 
-## 6. Publishing blog posts
+## 6. Blog and Sanity CMS
 
-Articles live in `src/content/blog.ts`. Add an object to the `articles` array
-with `published: true` and a genuine `publishedAt` ISO date. Content is written
-as structured blocks (`paragraph`, `heading`, `list`). Drafts (`published: false`)
-and posts without a real date are never shown. Slugs become `/blog/<slug>`.
+The blog is powered by **Sanity CMS**. Articles are structured content stored in
+Sanity and fetched at request time through GROQ queries. Only documents with
+`published: true` (and a real `publishedAt` date) appear on `/blog`, on article
+pages, and in `sitemap.xml`. Drafts are never shown publicly and never enter the
+sitemap. If Sanity is not configured, the site still builds: `/blog` shows a
+helpful empty state and no article URLs are generated.
+
+### 6.1 Create a Sanity project
+
+1. Create a free account at [sanity.io](https://www.sanity.io/manage) and create
+   a new project (any plan that includes the dataset).
+2. Copy the **Project ID** shown in project settings. The dataset is usually
+   `production`.
+3. In **Project settings → API → CORS origins**, add:
+   - `http://localhost:3000` (local development)
+   - your deployed domain (for example `https://joshisoftwaresolutions.netlify.app`)
+   Enable credentials only if you later add authenticated preview.
+4. In **API → Tokens**, create a token with **Editor** (write) permissions. This
+   token is only used by the seed script, run locally.
+
+### 6.2 Configure environment variables
+
+Copy the Sanity blocks from `.env.example` into `.env.local` and fill them in:
+
+```
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_STUDIO_PROJECT_ID=your_project_id
+SANITY_STUDIO_DATASET=production
+SANITY_API_TOKEN=your_editor_token
+```
+
+The `NEXT_PUBLIC_` values are safe for the browser. `SANITY_API_TOKEN` is a
+private write credential and must never be exposed to client code or committed.
+Add all five variables to your host's environment settings for production.
+
+### 6.3 Run Sanity Studio
+
+The Studio configuration lives in `sanity.config.ts` and `sanity/schemaTypes/`.
+Run it locally (it starts on `http://localhost:3333`):
+
+```bash
+npx sanity dev
+```
+
+To host the editor for ongoing use, deploy the Studio to Sanity's hosting:
+
+```bash
+npx sanity deploy
+```
+
+That produces a secure, authenticated editor URL (for example
+`https://joshi-software-solutions.sanity.studio`) where you can write, preview,
+and publish articles without touching the code.
+
+### 6.4 Seed the five starting drafts
+
+`scripts/seed-articles.mjs` contains five complete, CMS-ready drafts:
+
+1. How Much Does a Business Website Cost in India in 2026?
+2. Why Every Small Business Needs a Mobile-Friendly Website
+3. 7 Practical Ways to Make Your Website Faster
+4. Basic SEO Checklist for a New Business Website
+5. Website Maintenance: What It Includes and Why It Matters
+
+With `SANITY_API_TOKEN` set, run:
+
+```bash
+npm run seed:articles
+```
+
+The script is idempotent (it uses fixed document IDs) and imports every article
+with `published: false`. Review each draft in Studio, add a real cover image with
+alt text, check the pricing examples, then publish when ready.
+
+### 6.5 Publishing workflow
+
+1. Create or edit an article in Studio.
+2. Add a cover image (required before publishing) and accurate alt text.
+3. Keep **Published** off until the draft has been reviewed.
+4. Turn **Published** on and set the publication date when ready.
+5. Optionally mark one article as **Featured** for the top of `/blog`.
+
+Published content revalidates within 60 seconds (tag-based caching). To force an
+immediate refresh after publishing, set `SANITY_REVALIDATE_SECRET` and add a
+Sanity webhook pointing at `/api/revalidate`:
+
+- URL: `https://your-domain.example/api/revalidate`
+- Method: `POST`
+- HTTP header: `x-webhook-secret: <your SANITY_REVALIDATE_SECRET>`
+
+The endpoint rejects requests without the correct secret and is disabled (HTTP
+501) when no secret is configured. Never expose the secret to the browser.
+
+Notes:
+
+- Do not fabricate research, customers, case studies, rankings, or performance
+  results. Prices in the starting drafts are illustrative estimates.
+- No fake comments, view counts, ratings, or engagement metrics are rendered.
+- Cover images are served through Sanity's CDN; `next.config.ts` allows the
+  `cdn.sanity.io` remote pattern.
+
+### 6.6 Local fallback content
+
+`src/content/blog.ts` is an optional local fallback for a small number of
+offline articles. It is empty by default. Sanity is the primary and recommended
+content source.
 
 ## 7. Updating prices
 

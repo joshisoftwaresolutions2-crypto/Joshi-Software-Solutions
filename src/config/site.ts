@@ -113,6 +113,17 @@ export const routes = {
   privacy: "/privacy",
 } as const;
 
+/** Sanity CMS configuration. */
+export const sanity = {
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "",
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+  apiVersion: "2024-01-01",
+} as const;
+
+export function isSanityConfigured(): boolean {
+  return Boolean(sanity.projectId && sanity.dataset);
+}
+
 /** Development-time warning listing any missing public configuration. */
 export function logConfigWarnings(): void {
   if (!process.env.NEXT_PUBLIC_BUSINESS_EMAIL) {
@@ -127,6 +138,11 @@ export function logConfigWarnings(): void {
   if (!process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY) {
     console.warn(
       "[config] Missing NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY. The contact form will show a clear setup message instead of sending. Add it to .env.local (development) or your host's environment settings (production).",
+    );
+  }
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || !process.env.NEXT_PUBLIC_SANITY_DATASET) {
+    console.warn(
+      "[config] Sanity CMS not configured. Blog will show empty state. Set NEXT_PUBLIC_SANITY_PROJECT_ID and NEXT_PUBLIC_SANITY_DATASET in .env.local or your host's environment settings.",
     );
   }
 }
